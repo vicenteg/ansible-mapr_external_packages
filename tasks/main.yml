@@ -21,3 +21,4 @@
   with_items:
     - jq
     - wget
+  environment: proxy_env
