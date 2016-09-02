@@ -4,19 +4,20 @@
 - name: install EPEL 6
   become: yes
   become_user: root
-  tags:
-    - metrics
-    - external
   yum: name=http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm state=installed
-  environment: proxy_env
-  when: ansible_distribution not in ('Amazon', 'Ubuntu')
+  environment: '{{proxy_env}}'
+  when: ansible_distribution in ('CentOS', 'RedHat') and ansible_distribution_major_version|version_compare('6', '=')
+
+- name: install EPEL 7
+  become: yes
+  become_user: root
+  yum: name=https://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-8.noarch.rpm state=installed
+  environment: '{{proxy_env}}'
+  when: ansible_distribution in ('CentOS', 'RedHat') and ansible_distribution_major_version|version_compare('7', '=')
 
 - name: enable EPEL 6
   become: yes
   become_user: root
-  tags:
-    - metrics
-    - external
   copy: src=epel.repo dest=/etc/yum.repos.d/epel.repo owner=root group=root mode=0644
   when: ansible_distribution in ('Amazon')
 
@@ -27,4 +28,4 @@
   with_items:
     - jq
     - wget
-  environment: proxy_env
+  environment: '{{proxy_env}}'
